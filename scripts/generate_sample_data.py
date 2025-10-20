@@ -64,21 +64,18 @@ if __name__ == "__main__":
     arg_parser.add_argument(
         "--out",
         metavar="Destination folder",
-        help="dossier d'écriture des données",
         type=str,
         required=True,
     )
     arg_parser.add_argument(
         "--nodes",
         metavar="Node count",
-        help="Nombre de node à créer",
         type=int,
         required=True,
     )
     arg_parser.add_argument(
         "--edges",
         metavar="Edge count",
-        help="Nombre d'edge à créer",
         type=int,
         required=True,
     )
@@ -94,7 +91,7 @@ if __name__ == "__main__":
     print("Generating nodes ...")
     nodes = generate_nodes(args.nodes)
     print("Nodes generated.")
-    
+
     print("Generating edges ...")
     edges = generate_edges(args.nodes, args.edges)
     print("Edges generated.")

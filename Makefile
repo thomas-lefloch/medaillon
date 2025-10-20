@@ -3,3 +3,6 @@ clean:
 
 seed:
 	python ./scripts/generate_sample_data.py --out data/raw --nodes 1000000 --edges 5000000
+
+bronze:
+	python ./scripts/to_parquet.py --src data/raw --out data/bronze

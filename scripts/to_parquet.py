@@ -1,9 +1,23 @@
 from pyarrow import csv, parquet
+import argparse
 
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument(
+    "--src", # in is a reserved keyword
+    metavar="Source folder",
+    type=str,
+    required=True,
+)
+arg_parser.add_argument(
+    "--out",
+    metavar="Destination folder",
+    type=str,
+    required=True,
+)
+args = arg_parser.parse_args()
 
-# TODO: passer des paramêtres --src et --dst pour les dossier parents des fichiers
-nodes = csv.read_csv("data/raw/nodes.csv")
-parquet.write_table(nodes, "data/bronze/nodes.parquet")
-
-edges = csv.read_csv("data/raw/edges.csv")
-parquet.write_table(edges, "data/bronze/edges.parquet")
+files = ["nodes", "edges"]
+for file in files:
+    content = csv.read_csv(f"{args.src}/{file}.csv")
+    parquet.write_table(content, f"{args.out}/{file}.parquet")
+    
