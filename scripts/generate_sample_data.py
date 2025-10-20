@@ -20,9 +20,12 @@
 # 0,123,REL
 # 1,456,REL
 
-
 # TODO: ajout doublon
-# TODO: ajout None
+# TODO: ajout valeur None
+
+import math
+
+
 def generate_nodes(node_count: int) -> list[dict]:
     possible_entities = ["Person", "Org", "Paper"]
     entity_index = 0
@@ -37,6 +40,20 @@ def generate_nodes(node_count: int) -> list[dict]:
         )
         entity_index = (entity_index + 1) % len(possible_entities)
     return nodes
+
+
+# We take  advantage of the fact that node ids are incremental to make relationship
+# Relationship are composed with neighboors
+# 0-1, 1-2, 2-3, ... n-0, 0-2, 1-3, n-1
+# until the number of edge requested is fullfiled
+def generate_edges(node_count: int, edge_count: int) -> list[dict]:
+    edges = []
+    for i in range(edge_count):
+        node_src = i % node_count
+        node_dest = (node_src + 1 + (math.trunc(i / node_count))) % node_count
+        edges.append({"src": node_src, "dest": node_dest, "type": "REL"})
+
+    return edges
 
 
 import argparse
@@ -58,18 +75,37 @@ if __name__ == "__main__":
         type=int,
         required=True,
     )
-    # arg_parser.add_argument(
-    #     "--edges",
-    #     metavar="Edge count",
-    #     help="Nombre d'edge à créer",
-    #     type=int,
-    #     required=True,
-    # )
+    arg_parser.add_argument(
+        "--edges",
+        metavar="Edge count",
+        help="Nombre d'edge à créer",
+        type=int,
+        required=True,
+    )
     args = arg_parser.parse_args()
 
-    nodes = generate_nodes(args.nodes)
+    max_edge_count = math.trunc(args.nodes * (args.nodes - 1) / 2)
+    if max_edge_count < args.edges:
+        print(
+            f"Too much edges. Maximum number of edges is {max_edge_count}. {args.edges} requested"
+        )
+        exit(1)
 
-    with open(f"{args.out}/nodes.csv", "w", newline="") as nodes_file:
-        node_writer = csv.DictWriter(nodes_file, nodes[0].keys())
+    print("Generating nodes ...")
+    nodes = generate_nodes(args.nodes)
+    print("Nodes generated.")
+    
+    print("Generating edges ...")
+    edges = generate_edges(args.nodes, args.edges)
+    print("Edges generated.")
+
+    print("Writing files ...")
+    with open(f"{args.out}/nodes.csv", "w", newline="") as node_file:
+        node_writer = csv.DictWriter(node_file, nodes[0].keys())
         node_writer.writeheader()
         node_writer.writerows(nodes)
+
+    with open(f"{args.out}/edges.csv", "w", newline="") as edge_file:
+        writer = csv.DictWriter(edge_file, edges[0].keys())
+        writer.writeheader()
+        writer.writerows(edges)
