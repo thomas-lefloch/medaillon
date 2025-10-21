@@ -43,7 +43,6 @@ def validate_edges(edges_df: pd.DataFrame) -> list[int]:
         gx.expectations.ExpectColumnValuesToNotBeNull(column="src")
     )
     edges_result = edges_batch.validate(edges_expectations)
-    print(edges_result)
     invalid_indexes = set()
     for res in edges_result.get_failed_validation_results().results:
         invalid_indexes.update(res.result["partial_unexpected_index_list"])
