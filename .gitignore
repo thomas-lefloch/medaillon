@@ -209,6 +209,7 @@ __marimo__/
 brief.pdf
 data/raw/*
 data/bronze/*
-data/silver/*
+data/silver/edges/*
+data/silver/nodes.parquet
 data/gold/*
 !data/**/.gitkeep
