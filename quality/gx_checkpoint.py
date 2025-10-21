@@ -63,7 +63,8 @@ def clean_edges(src: str, dest: str):
     invalid_indexes = validate_edges(edges_bronze)
     print("edges:", len(invalid_indexes), "lignes fautives")
     edges_silver = edges_bronze.drop(index=invalid_indexes)
-    edges_silver.to_parquet(f"{dest}/edges.parquet")
+    edges_silver = edges_silver.reset_index().drop("index", axis="columns")
+    edges_silver.to_parquet(f"{dest}/edges.parquet", engine="pyarrow")
 
 
 arg_parser = argparse.ArgumentParser()
