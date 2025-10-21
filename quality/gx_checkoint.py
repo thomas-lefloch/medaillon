@@ -16,7 +16,7 @@ edges_bronze = pd.read_parquet("data/bronze/edges.parquet")
 gx_context = gx.get_context()
 data_source = gx_context.data_sources.add_pandas("pandas")
 
-nodes_dataset = data_source.add_dataframe_asset("nodes_bronze")
+nodes_dataset = data_source.add_dataframe_asset("nodes bronze")
 nodes_batch_def = nodes_dataset.add_batch_definition_whole_dataframe("nodes whole data")
 nodes_batch = nodes_batch_def.get_batch(batch_parameters={"dataframe": nodes_bronze})
 
@@ -29,7 +29,11 @@ edges_batch_def = edges_dataset.add_batch_definition_whole_dataframe("edges whol
 edges_batch = edges_batch_def.get_batch(batch_parameters={"dataframe": edges_bronze})
 
 edges_expectations = gx.ExpectationSuite(name="edges validation")
-edges_expectations.add_expectation(gx.expectations.ExpectColumnValuesToNotBeNull(column="dest")) 
-edges_expectations.add_expectation(gx.expectations.ExpectColumnValuesToNotBeNull(column="src"))
+edges_expectations.add_expectation(
+    gx.expectations.ExpectColumnValuesToNotBeNull(column="dest")
+)
+edges_expectations.add_expectation(
+    gx.expectations.ExpectColumnValuesToNotBeNull(column="src")
+)
 edges_result = edges_batch.validate(edges_expectations)
 print(nodes_result, edges_result)
