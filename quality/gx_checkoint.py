@@ -7,24 +7,29 @@
 # - Quelles programmes pour neo4j_bulk_import ?
 # requete cypher en python dans .sh
 
+import great_expectations as gx
+import pandas as pd
 
-# return the list of uniques nodes and a set of all unique ids
-def filter_nodes_without_unique_id(nodes: list[dict]) -> list[dict]:
-    uniques_ids = set()
-    valid_nodes = []
-    for node in nodes:
-        if node["id"] in uniques_ids:
-            continue
-        valid_nodes.append(node)
-        uniques_ids.add(node["id"])
+nodes_bronze = pd.read_parquet("data/bronze/nodes.parquet")
+edges_bronze = pd.read_parquet("data/bronze/edges.parquet")
 
-    return valid_nodes
+gx_context = gx.get_context()
+data_source = gx_context.data_sources.add_pandas("pandas")
 
+nodes_dataset = data_source.add_dataframe_asset("nodes_bronze")
+nodes_batch_def = nodes_dataset.add_batch_definition_whole_dataframe("nodes whole data")
+nodes_batch = nodes_batch_def.get_batch(batch_parameters={"dataframe": nodes_bronze})
 
-# return the list of edges that don't have None for src and dest
-def filter_edges_with_missing_ids(edges: list[dict]) -> list[dict]:
-    valid_edges = []
-    for edge in edges:
-        if edge["src"] != None and edge["dest"] != None:
-            valid_edges.append(edge)
-    return valid_edges
+unique_id = gx.expectations.ExpectColumnValuesToBeUnique(column="id")
+nodes_result = nodes_batch.validate(unique_id)
+print(nodes_result)
+
+edges_dataset = data_source.add_dataframe_asset("edges bronze")
+edges_batch_def = edges_dataset.add_batch_definition_whole_dataframe("edges whole data")
+edges_batch = edges_batch_def.get_batch(batch_parameters={"dataframe": edges_bronze})
+
+edges_expectations = gx.ExpectationSuite(name="edges validation")
+edges_expectations.add_expectation(gx.expectations.ExpectColumnValuesToNotBeNull(column="dest")) 
+edges_expectations.add_expectation(gx.expectations.ExpectColumnValuesToNotBeNull(column="src"))
+edges_result = edges_batch.validate(edges_expectations)
+print(nodes_result, edges_result)
