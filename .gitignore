@@ -213,3 +213,7 @@ data/silver/edges/*
 data/silver/nodes.parquet
 data/gold/*
 !data/**/.gitkeep
+
+config/*
+!config/.gitkeep
+logs/*

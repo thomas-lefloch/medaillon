@@ -1,4 +1,39 @@
 services:
+  airflow-standalone:
+    image: apache/airflow
+    environment: 
+      AIRFLOW__CORE__LOAD_EXAMPLES: false
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW_CONFIG: /opt/airflow/config/airflow.cfg
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_PASSWORDS_FILE: /opt/airflow/config/passwords.json.generated
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+      - ./logs:/opt/airflow/logs
+      - ./config:/opt/airflow/config
+    ports:
+      - "8080:8080"
+    command: bash -c "pip install pandas great_expectations && airflow standalone"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "airflow" ]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+
   graph_db:
     container_name: neo
     image: neo4j
@@ -10,10 +45,25 @@ services:
     volumes:
       - neo-data:/data
       - ./data/gold:/import
+    depends_on:
+      postgres:
+        condition: service_healthy
+  
 
 volumes:
   neo-data:
+  postgres-data:
+
 
 networks:
   medaillon:
     driver: bridge
+
+
+
+# services:
+
+
+
+
+
