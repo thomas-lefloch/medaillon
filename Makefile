@@ -1,11 +1,11 @@
 clean:
+	docker compose down -v
 	rm -f data/raw/*.csv
 	rm -f data/bronze/*.parquet
 	rm -r -f data/silver/edges
 	rm -f data/silver/*.parquet
 	rm -f data/gold/*.csv
 	rm -f config/*.cfg config/*.generated
-	docker compose down -v
 
 seed:
 	python ./scripts/generate_sample_data.py --out data/raw --nodes 1000000 --edges 5000000

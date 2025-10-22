@@ -24,6 +24,8 @@
 # TODO: ajout valeur None
 
 import math
+import argparse
+import csv
 
 
 def generate_nodes(node_count: int) -> list[dict]:
@@ -56,8 +58,33 @@ def generate_edges(node_count: int, edge_count: int) -> list[dict]:
     return edges
 
 
-import argparse
-import csv
+def generate_sample_data(node_count, edge_count, dest):
+    max_edge_count = math.trunc(node_count * (node_count - 1) / 2)
+    if max_edge_count < edge_count:
+        print(
+            f"Too much edges. Maximum number of edges is {max_edge_count}. {edge_count} requested"
+        )
+        exit(1)
+
+    print("Generating nodes ...")
+    nodes = generate_nodes(node_count)
+    print("Nodes generated.")
+
+    print("Generating edges ...")
+    edges = generate_edges(node_count, edge_count)
+    print("Edges generated.")
+
+    print("Writing files ...")
+    with open(f"{dest}/nodes.csv", "w", newline="") as node_file:
+        node_writer = csv.DictWriter(node_file, nodes[0].keys())
+        node_writer.writeheader()
+        node_writer.writerows(nodes)
+
+    with open(f"{dest}/edges.csv", "w", newline="") as edge_file:
+        writer = csv.DictWriter(edge_file, edges[0].keys())
+        writer.writeheader()
+        writer.writerows(edges)
+
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser()
@@ -81,28 +108,4 @@ if __name__ == "__main__":
     )
     args = arg_parser.parse_args()
 
-    max_edge_count = math.trunc(args.nodes * (args.nodes - 1) / 2)
-    if max_edge_count < args.edges:
-        print(
-            f"Too much edges. Maximum number of edges is {max_edge_count}. {args.edges} requested"
-        )
-        exit(1)
-
-    print("Generating nodes ...")
-    nodes = generate_nodes(args.nodes)
-    print("Nodes generated.")
-
-    print("Generating edges ...")
-    edges = generate_edges(args.nodes, args.edges)
-    print("Edges generated.")
-
-    print("Writing files ...")
-    with open(f"{args.out}/nodes.csv", "w", newline="") as node_file:
-        node_writer = csv.DictWriter(node_file, nodes[0].keys())
-        node_writer.writeheader()
-        node_writer.writerows(nodes)
-
-    with open(f"{args.out}/edges.csv", "w", newline="") as edge_file:
-        writer = csv.DictWriter(edge_file, edges[0].keys())
-        writer.writeheader()
-        writer.writerows(edges)
+    generate_sample_data(args.nodes, args.edges, args.out)

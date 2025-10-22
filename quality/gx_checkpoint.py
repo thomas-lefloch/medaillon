@@ -64,23 +64,26 @@ def clean_edges(src: str, dest: str):
     print("edges:", len(invalid_indexes), "lignes fautives")
     edges_silver = edges_bronze.drop(index=invalid_indexes)
     edges_silver = edges_silver.reset_index().drop("index", axis="columns")
-    edges_silver.to_parquet(f"{dest}/edges.parquet", engine="pyarrow")
+    edges_silver.to_parquet(f"{dest}/edges.parquet")
 
+def gx_checkpoint(src, dest):
+    clean_nodes(src, dest)
+    clean_edges(src, dest)
 
-arg_parser = argparse.ArgumentParser()
-arg_parser.add_argument(
-    "--src",  # in is a reserved keyword
-    metavar="Source folder",
-    type=str,
-    required=True,
-)
-arg_parser.add_argument(
-    "--dest",
-    metavar="Destination folder",
-    type=str,
-    required=True,
-)
-args = arg_parser.parse_args()
+if __name__ == "__main__":
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument(
+        "--src",  # in is a reserved keyword
+        metavar="Source folder",
+        type=str,
+        required=True,
+    )
+    arg_parser.add_argument(
+        "--dest",
+        metavar="Destination folder",
+        type=str,
+        required=True,
+    )
+    args = arg_parser.parse_args()
 
-clean_nodes(args.src, args.dest)
-clean_edges(args.src, args.dest)
+    gx_checkpoint(args.src, args.dest)
