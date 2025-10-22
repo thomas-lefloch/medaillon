@@ -24,7 +24,6 @@ gold:
 
 e2e: clean seed bronze silver gold
 
-	
 up:
 	docker compose up -d
 
