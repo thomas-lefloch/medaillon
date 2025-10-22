@@ -21,8 +21,8 @@ def gold():
     # import into neo4j
     pass
 
-@dag(dag_id="etl")
-def etl():
+@dag(dag_id="full_process")
+def full_process():
     seed() >> bronze() >> silver() >> gold()
     
-etl()
+full_process()
