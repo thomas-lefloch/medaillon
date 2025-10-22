@@ -13,7 +13,19 @@ gold:
 	sh ./scripts/neo4j_bulk_import.sh
 
 up:
-	docker compose up
+	docker compose up -d
+
+clean:
+	rm -f data/raw/*.csv
+	rm -f data/bronze/*.parquet
+	rm -r -f data/silver/edges
+	rm -f data/silver/*.parquet
+	rm -f data/gold/*.csv
+
+e2e: clean seed bronze silver gold
+
+stop:
+	docker compose stop
 
 down:
 	docker compose down

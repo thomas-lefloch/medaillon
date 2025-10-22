@@ -1,5 +1,6 @@
 services:
-  neo4j:
+  graph_db:
+    container_name: neo
     image: neo4j
     ports:
       - 7474:7474

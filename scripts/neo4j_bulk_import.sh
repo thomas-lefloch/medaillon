@@ -11,8 +11,8 @@ edges = edges.rename({"src": ":START_ID", "dest": ":END_ID", "type": ":TYPE"}, a
 edges.to_csv("data/gold/edges.csv", index=False)
 EOF
 
-docker compose --remove-orphans run\
-    neo4j bin/neo4j-admin database import full\
+docker compose run --rm\
+    graph_db bin/neo4j-admin database import full\
     --id-type integer\
     --nodes //import/nodes.csv\
     --relationships //import/edges.csv\
