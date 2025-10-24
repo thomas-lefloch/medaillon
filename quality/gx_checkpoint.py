@@ -66,9 +66,18 @@ def clean_edges(src: str, dest: str):
     edges_silver = edges_silver.reset_index().drop("index", axis="columns")
     edges_silver.to_parquet(f"{dest}/edges.parquet")
 
-def gx_checkpoint(src, dest):
+
+def gx_checkpoint(src: str, dest: str):
+    """Will detect nodes with duplicate ids and delete both occurences.\n
+    Will detect and delete edges with missing ids.
+
+    Args:
+        src (str): folder containing nodes.parquet and edge.parquet
+        dest (str): folder that will contain the new nodes.parquet and edge.parquet
+    """
     clean_nodes(src, dest)
     clean_edges(src, dest)
+
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser()

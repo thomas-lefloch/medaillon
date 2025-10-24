@@ -1,6 +1,5 @@
 python <<EOF
 import pandas as pd
-import os
 
 nodes = pd.read_parquet("data/silver/nodes.parquet")
 nodes = nodes.rename({"id": "id:ID", "label": ":LABEL"}, axis="columns")

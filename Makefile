@@ -18,11 +18,11 @@ silver:
 	python ./scripts/partition_edges.py --edges data/silver/edges.parquet --dest data/silver/edges --partitions 8
 	rm data/silver/edges.parquet
 
-gold:
+import:
 	sh ./scripts/neo4j_bulk_import.sh
 
 
-e2e: clean seed bronze silver gold
+e2e: clean seed bronze silver import
 
 up:
 	docker compose up -d
@@ -32,3 +32,6 @@ stop:
 
 down:
 	docker compose down
+	
+down-v:
+	docker compose down -v
