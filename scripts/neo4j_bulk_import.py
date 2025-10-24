@@ -24,7 +24,7 @@ def import_into_neo4j():
         LOAD CSV WITH HEADERS FROM 'file:///nodes.csv'
         AS row
         CALL (row) {
-            CREATE (:Node:$(row.label) {id: toInteger(row.id), name: toInteger(row.name)})
+            CREATE (:Node:$(row.label) {id: toInteger(row.id), name: row.name, label: row.label})
         } IN TRANSACTIONS
     """
 

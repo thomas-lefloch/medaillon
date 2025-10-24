@@ -66,6 +66,9 @@ services:
       NEO4J_URI: neo4j://graph_db:7687/
     ports:
       - 8000:8000
+    depends_on:
+      graph_db:
+        condition: service_started
 
 volumes:
   neo-data:

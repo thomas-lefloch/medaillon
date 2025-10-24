@@ -8,8 +8,8 @@ import os
 
 
 @task
-def seed():
-    generate_sample_data(1_000_000, 5_000_000, "data/raw")
+def seed():  # millions of data is super slow
+    generate_sample_data(1_000, 5_000, "data/raw")
 
 
 @task

@@ -22,3 +22,8 @@ Pour générer et insérer les données dans neo4j on peut soit:
 - API http://localhost:8000
 
 Les données sont écritent dans le dossier `data`selon leur étape
+
+## routes d'API
+- /health renvoie {status:"healthy"}
+- /entity/{id} renvoie le Node correspondant à l'id
+- /query/cypher éxécute une requête cypher et renvoie le résultat
